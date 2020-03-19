@@ -118,6 +118,7 @@ namespace LocalVolatility
         protected abstract T Negative(T x);
         protected abstract T Add(T x, T y);
         protected abstract T Multiply(T x, T y);
+        protected abstract T Sqrt(T x);
         protected virtual string AsString(T x) => x.ToString();
         private T Substract(T x, T y) => Add(x, Negative(y));
         private Matrix<T> Multiply(Matrix<T> B)
