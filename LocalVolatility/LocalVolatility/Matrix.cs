@@ -14,7 +14,7 @@ namespace LocalVolatility
         public T this[int i, int j]
         {
             get => data[i, j];
-            private set => data[i, j] = value;
+            set => data[i, j] = value;
         }
         protected Matrix(int n) : this(n, n) { }
         protected Matrix(int m, int n) : this(m, n, default(T)) { }
