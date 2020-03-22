@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjetVolSto.Struct;
+using System.Net.Http;
 namespace ProjetVolSto.PricerObjects
 {
     interface IEXCloudRequest
     {
         Token Token { get; set; }
-        bool Post(string url);
-        bool Get(string url);
+        void Post(IEXRequest Request) ;
+        void Get(IEXRequest Request);
 
     }
 
