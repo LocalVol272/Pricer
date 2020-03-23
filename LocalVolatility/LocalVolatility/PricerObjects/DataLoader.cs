@@ -12,12 +12,12 @@ namespace ProjetVolSto.PricerObjects
         ApiRequest _request;
 
         internal ApiRequest Request { get => _request; }
-        internal Dictionary<string, string> Config { get; set; }
+        internal Dictionary<string, object> Config { get; set; }
 
-        public void Main()
+        public void Execute()
         {
             InitRequest();
-             
+           string a =  ExecuteRequestAsync().GetAwaiter().GetResult(); 
         }
 
         private void InitRequest()
@@ -26,7 +26,7 @@ namespace ProjetVolSto.PricerObjects
             _request.BuildRequest();
         }
 
-        private ApiRequest MakeRequest(Dictionary<string, string> config)
+        private ApiRequest MakeRequest(Dictionary<string, object> config)
         {
             if (config is null)
             {
@@ -34,14 +34,16 @@ namespace ProjetVolSto.PricerObjects
             }
 
 
-
-
-
-
             return new ApiRequest(config); ;
 
         }
 
+        private async Task<string> ExecuteRequestAsync()
+        {
+            // this method will execute the request with proper config
+            if (Request.RequestContent.Type == "GET") { return await Request.Get();}
+            else { return await Request.Get(); }
+        }
       
 
 
