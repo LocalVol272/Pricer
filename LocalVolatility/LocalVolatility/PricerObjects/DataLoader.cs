@@ -9,21 +9,23 @@ namespace ProjetVolSto.PricerObjects
 {
     class DataLoader
     {
-        ApiRequest _request;
+        public ApiRequest _request;
 
-        internal ApiRequest Request { get => _request; }
+        public ApiRequest Request { get => _request; set => _request = value; }
         internal Dictionary<string, object> Config { get; set; }
 
         public void Execute()
         {
             InitRequest();
-           string a =  ExecuteRequestAsync().GetAwaiter().GetResult(); 
+            string a = ExecuteRequestAsync().GetAwaiter().GetResult();
         }
 
         private void InitRequest()
         {
             _request = MakeRequest(Config);
             _request.BuildRequest();
+
+
         }
 
         private ApiRequest MakeRequest(Dictionary<string, object> config)
@@ -41,13 +43,10 @@ namespace ProjetVolSto.PricerObjects
         private async Task<string> ExecuteRequestAsync()
         {
             // this method will execute the request with proper config
-            if (Request.RequestContent.Type == "GET") { return await Request.Get();}
+            if (Request.RequestContent.Type == "GET") { return await Request.Get(); }
             else { return await Request.Get(); }
         }
-      
-
 
 
     }
-
 }

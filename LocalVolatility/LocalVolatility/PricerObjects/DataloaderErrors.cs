@@ -17,7 +17,7 @@ namespace ProjetVolSto.PricerObjects
 
     public static class DataLoaderError
     {
-
+        public const string DateFormatError = "Date Format Should Be YYYYMMDD or YYYYMM";
     }
 
     public static class ApiRequestError

@@ -10,7 +10,7 @@ using ProjetVolSto.Struct;
 
 namespace ProjetVolSto.PricerObjects
 {
-    class ApiRequest : Request, IEXCloudRequest,IAuthentification
+    class ApiRequest : HttpRequest, IEXCloudRequest,IAuthentification
     {
         protected Token token;
         private IEXRequest request;
@@ -24,8 +24,10 @@ namespace ProjetVolSto.PricerObjects
         public override void Post(HttpContent Request) => throw new NotImplementedException(ApiRequestError.NonImplementedMethod);
         public override void Get(object Request) => throw new NotImplementedException(ApiRequestError.NonImplementedMethod);
         public override void Post(object Request) => throw new NotImplementedException(ApiRequestError.NonImplementedMethod);
-
-
+        public override Task<string> Get(string url) => throw new NotImplementedException(ApiRequestError.NonImplementedMethod);
+        public override Task<string> Post(string url, HttpContent requestContent) => throw new NotImplementedException(ApiRequestError.NonImplementedMethod);
+        public bool Authentification(Token token) => throw new NotImplementedException();
+        public ApiRequest() {; }
 
         public ApiRequest(Dictionary<string, object> config)
         {
@@ -34,12 +36,12 @@ namespace ProjetVolSto.PricerObjects
             
         }
 
+        
+
        
 
-        public bool Authentification(Token token)
-        {
-            throw new NotImplementedException();
-        }
+
+
 
 
         public Token GetToken(Dictionary<string, object> config)
@@ -56,23 +58,25 @@ namespace ProjetVolSto.PricerObjects
         public void BuildRequest()
         {
 
-            this.SetTicker();
+            
             this.SetRequestType();
             this.SetParams();
+            this.SetTickers();
+            this.UnWrapParams();
             this.BuildUrl();
             this.RequestContent = request;
             
         }
 
-        private void SetTicker()
+        private void SetTickers()
         {
-            string Ticker = "Ticker";
+            string Tickers = "Tickers";
 
-            if (config.ContainsKey(Ticker))
+            if (this.request.Params.ContainsKey(Tickers))
             {
-                this.request.Ticker = this.config[Ticker].ToString();
+                this.request.Params[Tickers]= (List<string>)this.request.Params[Tickers];
             }
-            else { throw new Exception(String.Format(ConfigError.MissingKey, Ticker));};
+            else { throw new Exception(String.Format(ConfigError.MissingKey, Tickers));};
 
 
       
@@ -107,11 +111,38 @@ namespace ProjetVolSto.PricerObjects
                 {
 
 
-                    this.request.Params = this.config[Params];
+                    this.request.Params = (Dictionary<string, object>)this.config[Params];
+                    
                 }
             }
             else { throw new Exception(String.Format(ConfigError.MissingKey, Params)); };
         }
+
+
+        private void UnWrapParams()
+        {
+
+            
+            this.request.Params["Dates"] = (List<string>)this.request.Params["Dates"];SetDateFormat();
+
+        }
+        private void SetDateFormat()
+        {
+            var DateList = new List<string>();
+            
+            foreach(string dte in (List<string>)this.request.Params["Dates"])
+            {
+  
+                IEXDate iEXDate = new Date(dte);
+
+                DateList.Add(iEXDate.Format());
+            }
+
+            this.request.Params["Dates"] = DateList;
+
+        }
+
+
 
         public override async Task<string> Post()
         {

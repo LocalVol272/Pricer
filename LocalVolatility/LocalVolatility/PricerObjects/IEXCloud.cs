@@ -7,6 +7,8 @@ using ProjetVolSto.Struct;
 using System.Net.Http;
 namespace ProjetVolSto.PricerObjects
 {
+   
+
     interface IEXCloudRequest
     {
         Token Token { get; set; }
@@ -21,12 +23,12 @@ namespace ProjetVolSto.PricerObjects
         bool Authentification(Token token);
     }
 
-    interface IEXMessage
+    interface IEXResponse
     {
-        Dictionary<string, string> Read();
+        IEXRequest Read();
     }
 
-    interface IEXCloudResponse: IEXMessage
+    interface IEXCloudResponse: IEXResponse
     {
        bool CheckResponse();
         
@@ -34,9 +36,9 @@ namespace ProjetVolSto.PricerObjects
 
     interface IEXDate
     {
-        int Year { get; set; }
-        int Month{ get; set; }
-        int Day { get; set; }
+        string Year { get; set; }
+        string Month{ get; set; }
+        string Day { get; set; }
         string Format();
     }
 
