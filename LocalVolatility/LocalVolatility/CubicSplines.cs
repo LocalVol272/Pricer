@@ -103,7 +103,7 @@ namespace LocalVolatility
             double[] r = new double[n]; 
 
             //tridiagonal matrix
-            Matrix<double> m = CreateMatrix(n, n);
+            double [,] m = new double [n, n];
             for (int i = 0; i < n; i++)
             {
                 for(int j=0;j<n;j++)
@@ -169,8 +169,9 @@ namespace LocalVolatility
             //==================================================================
             //==================================================================
             //==================================================================
-            //SOLVE m HERE : m*k=r ie k=inv(m)*r
-            double[] k = m.Solve(r);
+            //Thomas algoithm===================================================
+            MatrixDecomposition md = new MatrixDecomposition(m);
+            double[] k = md.ThomasAlgorithm(r);
             //==================================================================
             // we want k, the solution to the matrix
             //==================================================================
