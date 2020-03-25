@@ -95,4 +95,38 @@ namespace LocalVolatility
             return dict;
         }
     }
+    public double [] ThomasAlgorithm(double [] r)
+        {
+            if (nbRows != nbCols)
+            {
+                throw new Exception($"Cannot compute Thomas algoithm, matrix is not square:\n\tA : {nbRows}x{nbCols}");
+            }
+            if (nbRows != r.Length)
+            {
+                throw new Exception($"Cannot compute Thomas algoithm, dimension error :\n\tA : {nbCols}x{r.Length}");
+            }
+            double[] lowerDiag = new double[nbCols-1];
+            double[] diag = new double[nbCols];
+            double[] upperDiag = new double[nbCols-1];
+            int row_ = 0;
+            for(int col = 0; col<nbCols-1; col++)
+            {
+                diag[col] = this[row_, col];
+                lowerDiag[col] = this[row_ + 1, col];
+                upperDiag[col] = this[row_, col + 1];
+                row_++;
+            }
+            diag[nbCols-1] = this[nbRows-1, nbCols-1];
+            double[] rStar_ = new double[nbCols];
+            double[] upperDiagStar_ = new double[nbCols];
+            rStar_[0] = r[0] / diag[0];
+            upperDiagStar_[0] = upperDiag[0] / diag[0];
+            for(int i=1; i<nbCols; i++)
+            {
+                double m = 1 / (diag[i] - lowerDiag[i-1] * upperDiagStar_[i - 1]);
+                upperDiagStar_[i] = upperDiag[i-1] * m;
+                rStar_[i] = (r[i] - lowerDiag[i-1] * rStar_[i - 1]) * m;
+            }           
+            return rStar_;
+        }
 }
