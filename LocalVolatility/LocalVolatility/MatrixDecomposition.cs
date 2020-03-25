@@ -94,8 +94,7 @@ namespace LocalVolatility
             dict.Add("U", U);
             return dict;
         }
-    }
-    public double [] ThomasAlgorithm(double [] r)
+        public double [] ThomasAlgorithm(double [] r)
         {
             if (nbRows != nbCols)
             {
@@ -128,5 +127,7 @@ namespace LocalVolatility
                 rStar_[i] = (r[i] - lowerDiag[i-1] * rStar_[i - 1]) * m;
             }           
             return rStar_;
-        }
+        }   
+    }
+    
 }
