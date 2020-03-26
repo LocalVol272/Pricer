@@ -18,14 +18,21 @@ namespace ProjetVolSto.Struct
         
     }
 
-    public static class Mapping
+    public static class ApiMapping
     {
         public static readonly Dictionary<string, string> Roots = new Dictionary<string, string>()
         {
             { "GetAllTickers", "https://sandbox.iexapis.com/stable/ref-data/region/{0}/symbols?token={1}"},
-            {"GetStockOptions","https://sandbox.iexapis.com/stable/stock/{0}/options?token={1}" }
+            {"GetOptions","https://sandbox.iexapis.com/stable/stock/{0}/options/{1}/{2}?token={3}" }
 
         };
+
+
+
+
+
+
+
 
 
 

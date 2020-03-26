@@ -74,7 +74,12 @@ namespace ProjetVolSto.PricerObjects
 
             if (this.request.Params.ContainsKey(Tickers))
             {
+
+
                 this.request.Params[Tickers]= (List<string>)this.request.Params[Tickers];
+            
+            
+            
             }
             else { throw new Exception(String.Format(ConfigError.MissingKey, Tickers));};
 
@@ -94,12 +99,11 @@ namespace ProjetVolSto.PricerObjects
 
         }
 
-
         private void BuildUrl()
         {
-            
 
         }
+       
 
         private void SetParams()
         {
@@ -123,7 +127,9 @@ namespace ProjetVolSto.PricerObjects
         {
 
             
-            this.request.Params["Dates"] = (List<string>)this.request.Params["Dates"];SetDateFormat();
+            this.request.Params["Dates"] = (List<string>)this.request.Params["Dates"];
+            SetDateFormat();
+            SetProductType();
 
         }
         private void SetDateFormat()
@@ -141,6 +147,22 @@ namespace ProjetVolSto.PricerObjects
             this.request.Params["Dates"] = DateList;
 
         }
+
+        private void SetProductType()
+        {
+            string productType = "ProductType";
+            if (this.request.Params.ContainsKey(productType))
+            {
+                char separator = '/';
+                string product_type = this.request.Params[productType].ToString();
+                string[] args = product_type.Split(separator);
+                this.request.Params.Add("Product",args[0]);
+                this.request.Params.Add("Type", args[1]);
+
+            }
+            else { throw new Exception(String.Format(ConfigError.MissingKey, productType));}
+        }
+
 
 
 

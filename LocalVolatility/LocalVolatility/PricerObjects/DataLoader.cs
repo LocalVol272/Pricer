@@ -4,23 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjetVolSto.Struct;
-
+using System.Runtime.InteropServices;
 namespace ProjetVolSto.PricerObjects
 {
     class DataLoader
     {
         public ApiRequest _request;
-
+        protected HttpsRequest request;
         public ApiRequest Request { get => _request; set => _request = value; }
         internal Dictionary<string, object> Config { get; set; }
 
+
+     
+        
+        
         public void Execute()
         {
             InitRequest();
-            string a = ExecuteRequestAsync().GetAwaiter().GetResult();
+            //string a = ExecuteRequestAsync().GetAwaiter().GetResult();
+            request = new HttpsRequest();
         }
 
-        private void InitRequest()
+        protected void InitRequest([Optional] Dictionary<string,object> Config)
         {
             _request = MakeRequest(Config);
             _request.BuildRequest();
@@ -28,7 +33,7 @@ namespace ProjetVolSto.PricerObjects
 
         }
 
-        private ApiRequest MakeRequest(Dictionary<string, object> config)
+        protected ApiRequest MakeRequest(Dictionary<string, object> config)
         {
             if (config is null)
             {

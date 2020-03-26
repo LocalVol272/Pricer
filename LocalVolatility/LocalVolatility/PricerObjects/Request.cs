@@ -84,15 +84,28 @@ namespace ProjetVolSto.PricerObjects
             {
                 HttpResponseMessage message = await client.GetAsync(url);
 
-                Console.WriteLine(message.Content.ToString());
-                return await message.Content.ReadAsStringAsync();
+                if (message.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine("Information Has not Been Found");
+                    Console.WriteLine(message);
+                    return System.Net.HttpStatusCode.NotFound.ToString();
+                }
+                else
+                {
+                    return await message.Content.ReadAsStringAsync();
+                }
+                
+                
+                
 
             }
             catch (Exception _exception)
             {
                 Console.WriteLine(_exception);
+                return null;
             }
-            return null;
+
+            
         }
 
         public override async Task<string> Post(string url,HttpContent requestContent)
@@ -111,13 +124,23 @@ namespace ProjetVolSto.PricerObjects
             try
             {
                 HttpResponseMessage message = await client.PostAsync(url, requestContent);
-                return await message.Content.ReadAsStringAsync();
+                if (message.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine("Information Has not Been Found");
+                    Console.WriteLine(message);
+                    return System.Net.HttpStatusCode.NotFound.ToString();
+                }
+                else
+                {
+                    return await message.Content.ReadAsStringAsync();
+                }
             }
             catch (Exception _exception)
             {
                 Console.WriteLine(_exception);
+                return null;
             }
-            return null;
+           
         }
     }
 

@@ -12,10 +12,22 @@ using System.Runtime.InteropServices;
 namespace ProjetVolSto.PricerObjects
 {
 
-    class Ticker
+    public class Ticker
     {
         public string symbol { get; set;}
     }
+
+    public static class TickerFormat
+    {
+        public static List<string> ToListString(this List<Ticker> list)
+        {
+            List<string> listTickers = new List<string>();
+            list.ForEach(x => listTickers.Add(x.symbol));
+            return listTickers;
+        }
+
+    }
+
 
 
 
@@ -27,12 +39,13 @@ namespace ProjetVolSto.PricerObjects
         private IEXRequest _requestContent;
         public Token Token { get => _token; set => _token = value; }
         private string Reponse { get => _response; set => _response = value; }
-        private HttpsRequest request;
+        private new HttpsRequest request;
         public IEXRequest RequestContent { get => _requestContent; set => RequestContent = _requestContent; }
         public Stock(Dictionary<string, object> config)
         {
             this.Config = config;
             this.Token = GetToken(config);
+            _request = new ApiRequest();
         }
 
         public Stock() => _request = new ApiRequest();
@@ -84,7 +97,7 @@ namespace ProjetVolSto.PricerObjects
             {
                 
                 case "GetAllTickers":
-                    url = String.Format(Mapping.Roots[root], args[0],Token.value);
+                    url = String.Format(ApiMapping.Roots[root], args[0],Token.value);
                     break;
 
             }

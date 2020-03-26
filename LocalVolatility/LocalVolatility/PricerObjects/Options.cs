@@ -13,82 +13,37 @@ namespace ProjetVolSto.PricerObjects
 {
     class Options : DataLoader, IAuthentification
     {
-        private string _response;
-        private string url;
         private Token _token;
-        private IEXRequest _requestContent;
-        public Token Token { get => _token; set => _token = value; }
+        private string url;
+        private string _response;
+       
         private string Reponse { get => _response; set => _response = value; }
-        private HttpsRequest request;
-        public IEXRequest RequestContent { get => _requestContent; set => RequestContent = _requestContent; }
+        public Options() => _request = new ApiRequest();
+        public Options(Token token) => Token = token;        
+        public Token Token { get => _token; set => _token = value; }
+        
         public Options(Dictionary<string, object> config)
         {
-            this.Config = config;
-            this.Token = GetToken(config);
-        }
-
-        public Options() => _request = new ApiRequest();
-        public Options(Token token) => Token = token;
-
-        public List<Ticker> GetAllStockOptions(string ticker)
-        {
-            string[] args = { ticker };
-            var stack = new StackTrace();
-            string root = stack.GetFrame(0).GetMethod().Name;
-            Init(args, root);
-            GetReponse();
-
-            return JsonConvert.DeserializeObject<List<Ticker>>(_response);
-        }
-
-        private void GetReponse()
-        {
-            _response = ExecuteRequest(url)
-                            .GetAwaiter()
-                            .GetResult();
-            _requestContent.Response = _response;
-        }
-
-        private void Init(string[] args, string root)
-        {
-            InitRequest();
-            BuildUrl(root, args);
-        }
-
-        private async Task<string> ExecuteRequest(string url)
-        {
-
-            return await request.Get(url);
-        }
-
-
-        private async Task<string> ExecuteRequest(string url, HttpContent requestContent)
-        {
-            return await request.Post(url, requestContent);
-        }
-
-
-        private void BuildUrl(string root, [Optional]string[] args)
-        {
-            switch (root)
+            try
             {
-                case "GetStockOptions":
-                    url = String.Format(Mapping.Roots[root], args[0], Token.value);
-                    break;
+                this.Config = config;
+                this.Token = GetToken(this.Config);
+                this.InitRequest(this.Config);
+               
             }
-
-        }
-
-
-        private void InitRequest()
-        {
-            if (Authentification(Token))
+            catch (Exception _execption)
             {
-                request = new HttpsRequest();
-                Request.RequestContent = new IEXRequest();
-            }
+                throw new Exception(_execption.Message);
 
+            }
         }
+
+        public bool Authentification(Token token)
+        {
+            if (token.value is null) { throw new Exception(ConfigError.MissingTokenValue); }
+            else { return true; }
+        }
+
 
         public Token GetToken(Dictionary<string, object> config)
         {
@@ -102,13 +57,91 @@ namespace ProjetVolSto.PricerObjects
         }
 
 
-        public bool Authentification(Token token)
+        public Dictionary<string, Dictionary<string, List<Option>>> GetOptions()
         {
-            if (token.value is null) { throw new Exception(ConfigError.MissingTokenValue); }
-            else { return true; }
+          
+            var stack = new StackTrace();
+            string root = stack.GetFrame(0).GetMethod().Name;
+
+
+            Dictionary<string, Dictionary<string, List<Option>>> res = new Dictionary<string, Dictionary<string, List<Option>>>();
+            Dictionary<string, List<Option>> tempOptionByDates; ;
+            List<Option> ListOptions = new List<Option>();
+
+            
+
+            foreach(string ticker in (List<string>)Request.RequestContent.Params["Tickers"])
+            {
+                tempOptionByDates = new Dictionary<string, List<Option>>();
+
+                foreach (string dte in (List<string>)Request.RequestContent.Params["Dates"])
+                {
+                    string[] args = { ticker, dte };
+                    BuilUrl(root,args);
+                    _response = ExecuteRequest(url)
+                        .GetAwaiter()
+                        .GetResult();
+
+                    switch(_response)
+                    {
+                        case "NotFound":
+                            break;
+                        default:
+                            tempOptionByDates.Add(dte, JsonConvert.DeserializeObject<List<Option>>(_response));
+                            break ;
+                    }
+
+
+                }
+                res.Add(ticker, tempOptionByDates);
+            }
+
+            return res;
+
         }
 
-      
+
+        private void BuilUrl(string root, [Optional]string[] args)
+        {
+            switch (root)
+            {
+                
+                case "GetOptions":
+                    string type = Request.RequestContent.Params["Type"].ToString(); 
+                    string ticker = args[0];
+                    string date = args[1];
+                     
+                    url = String.Format(ApiMapping.Roots[root],ticker,date, type, Token.value);
+                    break;
+
+            }
+
+
+
+
+        }
+
+        private async Task<string> ExecuteRequest(string url,[Optional]HttpContent content)
+        {
+            request = new HttpsRequest();
+
+            if(Request.RequestContent.Type=="GET")
+            {
+                return await request.Get(url);
+            }
+            else if(Request.RequestContent.Type == "POST")
+            {
+              
+                return await request.Post(url, content);
+            }
+            else{throw new NotImplementedException("This Request Type Does Not Exist");}
+
+
+        }
+
+
+
+
 
 
     }
