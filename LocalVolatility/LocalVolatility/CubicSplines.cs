@@ -163,7 +163,7 @@ namespace LocalVolatility
                 r[n - 1] = endSlope;
             }
 
-            if (debug) Console.WriteLine("Matrix:\n{0}", m.ToString);
+            if (debug) Console.WriteLine("Matrix:\n{0}", m.ToString());
 
             //==================================================================
             //==================================================================
