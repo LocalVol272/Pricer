@@ -66,6 +66,19 @@ namespace LocalVolTest
             dict.Add("dK2", dK2);
             return dict;
         }
-       
+        
+       public double[,] LocalVolatility(double [,]dT, double[,]dK, double[,] dK2, double r)
+        {
+            double[,] locvol = new double[nbRows-1, nbCols-1];
+            for(int i = 0; i < nbRows -1; i++)
+            {
+                for(int j = 0; j < nbCols; j++)
+                {
+                    locvol[i,j] = Math.Sqrt((dT[i,j] +r*strikes[i]*dK[i,j])/2*Math.Pow(strikes[i],2)*dK2[i,j]);
+
+                }
+            }
+            return locvol;
+        }
     }
 }
