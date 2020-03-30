@@ -45,7 +45,27 @@ namespace LocalVolTest
 
             return sourceWithoutNulls;
         }
-
+        
+        public Dictionary<string, double[,]> Sensitivities()
+        {
+            double[,] dK = new double[nbRows - 1, nbCols - 1];
+            double[,] dT = new double[nbRows - 1, nbCols - 1];
+            double[,] dK2 = new double[nbRows - 1, nbCols - 1];
+            for (int t = nbCols-1; t>0; t--)
+            {
+                for(int k = nbRows - 1; k>1; k--)
+                {
+                    dT[k - 1, t - 1] = (this[k, t] - this[k, t - 1]) / (tenors[t] - tenors[t - 1]);
+                    dK[k - 1, t - 1] = (this[k, t] - this[k - 1, t]) / (strikes[k] - strikes[k - 1]);
+                    dK2[k - 1, t - 1] = (this[k, t] - 2 * this[k - 1, t] + this[k - 2, t]) / Math.Pow(strikes[k] - strikes[k - 1],2) ;
+                }
+            }
+            Dictionary<string, double[,]> dict = new Dictionary<string, double[,]>();
+            dict.Add("dK", dK);
+            dict.Add("dT", dT);
+            dict.Add("dK2", dK2);
+            return dict;
+        }
        
     }
 }
