@@ -242,5 +242,33 @@ namespace LocalVolatility
 
             return retSlopes;
         }
+        
+        //Get second derivative for an input array of tryouts
+        public double[] EstimateSecondDeriv(double[] x, bool debug = false)
+        {
+            //first check if fitted :
+            IsFitted();
+
+            int n = x.Length;
+            double[] retSecDer = new double[n];
+
+            _previousI = 0; //for multiple estimations, set to 0 at each eval
+
+            for (int i = 0; i < n; i++)
+            {
+                // Find which spline can be used to compute this x (by simultaneous traverse)
+                int j = _NextI(x[i]);
+
+                // Estimate at j spline
+                double dx = xInit[j + 1] - xInit[j];
+                double t = (x[i] - xInit[j]) / dx;
+
+                retSecDer[i] = 2 * (b[j] - 2 * a[j] + (a[j] - b[j]) * 3 * t) / (dx * dx);
+
+                if (debug) Console.WriteLine("[{0}]: xs = {1}, j = {2}, t = {3}", i, x[i], j, t);
+            }
+
+            return retSecDer;
+        }
     }
 }
